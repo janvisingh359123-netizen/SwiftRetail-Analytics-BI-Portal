@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftRetail BI & Sales Intelligence Portal | Jahanvi's Portfolio</title>
+  
+  <!-- Inter & Outfit Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- ApexCharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
+  <!-- Dashboard Style Sheets -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Global Dashboard Wrapper -->
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-chart-simple brand-icon"></i>
+        <span>SwiftRetail</span>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar">JS</div>
+        <div class="user-info">
+          <h4>Jahanvi Singh</h4>
+          <p>Lead Data Analyst</p>
+        </div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="#executive" class="menu-item active" data-tab="executive">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Executive Overview</span>
+        </a>
+        <a href="#customers" class="menu-item" data-tab="customers">
+          <i class="fa-solid fa-users"></i>
+          <span>Customer Analytics</span>
+        </a>
+        <a href="#products" class="menu-item" data-tab="products">
+          <i class="fa-solid fa-box-open"></i>
+          <span>Product Analytics</span>
+        </a>
+        <a href="#orders" class="menu-item" data-tab="orders">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Order Analytics</span>
+        </a>
+        <a href="#sql-console" class="menu-item" data-tab="sql-console">
+          <i class="fa-solid fa-database"></i>
+          <span>SQL Query Console</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="theme-toggle" class="btn-theme-toggle">
+          <i class="fa-solid fa-moon"></i>
+          <span>Dark Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header / Filters Bar -->
+      <header class="header">
+        <div class="header-title-container">
+          <h1>SwiftRetail Analytics & BI Portal</h1>
+          <p class="subtitle">Omnichannel Sales Performance & Customer Segment Intelligence</p>
+        </div>
+        
+        <!-- Global Controls / Actions -->
+        <div class="header-actions">
+          <div class="db-status-badge">
+            <span class="status-indicator online"></span>
+            <span id="db-type-label">PostgreSQL</span>
+          </div>
+          <button id="export-pdf" class="btn btn-secondary">
+            <i class="fa-solid fa-file-pdf"></i> PDF Report
+          </button>
+          <button id="export-csv" class="btn btn-secondary">
+            <i class="fa-solid fa-file-csv"></i> Export Data
+          </button>
+        </div>
+      </header>
+
+      <!-- Global Filter Panel -->
+      <section class="filter-panel card">
+        <div class="filter-title">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Global Filter Controls</span>
+        </div>
+        <div class="filter-grid">
+          <!-- Date Range Filter -->
+          <div class="filter-group">
+            <label for="filter-start-date">Start Date</label>
+            <input type="date" id="filter-start-date" value="2022-01-01">
+          </div>
+          <div class="filter-group">
+            <label for="filter-end-date">End Date</label>
+            <input type="date" id="filter-end-date" value="2026-05-31">
+          </div>
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <label for="filter-category">Product Category</label>
+            <select id="filter-category">
+              <option value="">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Home & Kitchen">Home & Kitchen</option>
+              <option value="Sports">Sports</option>
+              <option value="Beauty">Beauty</option>
+              <option value="Books">Books</option>
+            </select>
+          </div>
+          <!-- Region Filter -->
+          <div class="filter-group">
+            <label for="filter-region">Region (Country/State)</label>
+            <select id="filter-region">
+              <option value="">All Regions</option>
+              <optgroup label="Countries">
+                <option value="United States">United States</option>
+                <option value="India">India</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Germany">Germany</option>
+              </optgroup>
+              <optgroup label="States">
+                <option value="California">California (US)</option>
+                <option value="New York">New York (US)</option>
+                <option value="Texas">Texas (US)</option>
+                <option value="Florida">Florida (US)</option>
+                <option value="Maharashtra">Maharashtra (IN)</option>
+                <option value="Karnataka">Karnataka (IN)</option>
+                <option value="Delhi">Delhi (IN)</option>
+                <option value="Bavaria">Bavaria (DE)</option>
+              </optgroup>
+            </select>
+          </div>
+          <!-- RFM Segment Filter -->
+          <div class="filter-group">
+            <label for="filter-segment">Customer Segment</label>
+            <select id="filter-segment">
+              <option value="">All Segments</option>
+              <option value="Platinum">Platinum (High Spend/Freq)</option>
+              <option value="Gold">Gold (Active Shoppers)</option>
+              <option value="Silver">Silver (Mid-tier Customers)</option>
+              <option value="Bronze">Bronze (At Risk/Low Value)</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button id="btn-apply-filters" class="btn btn-primary">
+            <i class="fa-solid fa-rotate"></i> Apply Filters
+          </button>
+          <button id="btn-reset-filters" class="btn btn-outline">
+            <i class="fa-solid fa-arrows-rotate"></i> Reset
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI summary grid (Always visible at the top of tabs) -->
+      <section class="kpi-grid">
+        <!-- KPI card 1: Revenue -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container rev-color">
+            <i class="fa-solid fa-dollar-sign"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Total Revenue</span>
+            <h3 id="kpi-revenue" class="kpi-value">$0.00</h3>
+            <span class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> Active orders</span>
+          </div>
+        </div>
+        <!-- KPI card 2: Orders -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container orders-color">
+            <i class="fa-solid fa-receipt"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Total Orders</span>
+            <h3 id="kpi-orders" class="kpi-value">0</h3>
+            <span class="kpi-trend"><span id="kpi-order-processing-pct">0%</span> Processing</span>
+          </div>
+        </div>
+        <!-- KPI card 3: Customers -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container customers-color">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Total Customers</span>
+            <h3 id="kpi-customers" class="kpi-value">0</h3>
+            <span class="kpi-trend trend-up"><i class="fa-solid fa-user-check"></i> Sign-ups active</span>
+          </div>
+        </div>
+        <!-- KPI card 4: AOV -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container aov-color">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Average Order Value</span>
+            <h3 id="kpi-aov" class="kpi-value">$0.00</h3>
+            <span class="kpi-trend">Revenue / Orders</span>
+          </div>
+        </div>
+        <!-- KPI card 5: Profit -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container profit-color">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Gross Profit</span>
+            <h3 id="kpi-profit" class="kpi-value">$0.00</h3>
+            <span class="kpi-trend trend-up"><i class="fa-solid fa-arrow-right"></i> Net sales</span>
+          </div>
+        </div>
+        <!-- KPI card 6: Margin -->
+        <div class="kpi-card card">
+          <div class="kpi-icon-container margin-color">
+            <i class="fa-solid fa-percent"></i>
+          </div>
+          <div class="kpi-body">
+            <span class="kpi-title">Profit Margin</span>
+            <h3 id="kpi-margin" class="kpi-value">0.0%</h3>
+            <span class="kpi-trend">Avg margin %</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Tabs Container -->
+      <div class="tabs-container">
+        
+        <!-- Tab 1: Executive Overview -->
+        <div id="tab-executive" class="tab-pane active">
+          <!-- Insights callout panel -->
+          <div class="insights-container card">
+            <div class="insights-header">
+              <i class="fa-solid fa-lightbulb"></i>
+              <h3>Dynamic Business Insights Engine</h3>
+            </div>
+            <ul id="insights-list" class="insights-list">
+              <li><i class="fa-solid fa-spinner fa-spin"></i> Calculating real-time insights...</li>
+            </ul>
+          </div>
+          
+          <!-- Grid Layout for Charts -->
+          <div class="charts-grid-two">
+            <!-- Revenue Trend line chart -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Revenue & Profit Monthly Trend</h3>
+                <span class="chart-desc">Historical timeline (2022–2026)</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-revenue-trend" class="apex-chart-container"></div>
+              </div>
+            </div>
+            <!-- Sales by Category bar chart -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Sales Revenue by Product Category</h3>
+                <span class="chart-desc">Categories ranked by total sales volume</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-sales-category" class="apex-chart-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="charts-grid-two margin-top-20">
+            <!-- Regional Performance map-like representation -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Regional Performance Matrix</h3>
+                <span class="chart-desc">Top 15 state & country revenue generators</span>
+              </div>
+              <div class="chart-body scrollable-y max-height-400">
+                <table class="data-table" id="table-regional-performance">
+                  <thead>
+                    <tr>
+                      <th>Region / State</th>
+                      <th>Country</th>
+                      <th>Revenue</th>
+                      <th>Orders</th>
+                      <th>Customers</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Top 10 Products Horizontal Bar -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Top 10 Products by Revenue</h3>
+                <span class="chart-desc">Horizontal performance leaderboard</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-top-products" class="apex-chart-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab 2: Customer Analytics -->
+        <div id="tab-customers" class="tab-pane">
+          <div class="charts-grid-two">
+            <!-- Customer growth signup line -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Customer Sign-up Timeline</h3>
+                <span class="chart-desc">Monthly growth and cumulative customer base</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-customer-growth" class="apex-chart-container"></div>
+              </div>
+            </div>
+            <!-- Customer segmentation RFM distribution -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Customer Value Segmentation (RFM Analysis)</h3>
+                <span class="chart-desc">Grouped by Recency, Frequency, & Monetary score</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-customer-segmentation" class="apex-chart-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="charts-grid-three margin-top-20">
+            <!-- Gender distribution pie -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Customer Gender Distribution</h3>
+                <span class="chart-desc">Proportions by sign-ups and total orders</span>
+              </div>
+              <div class="chart-body flex-center">
+                <div id="chart-gender-distribution" class="apex-chart-container width-100"></div>
+              </div>
+            </div>
+            <!-- Customer Lifetime Value cohorts -->
+            <div class="chart-card card span-two">
+              <div class="chart-header">
+                <h3>Customer Lifetime Value (LTV Cohort Analysis)</h3>
+                <span class="chart-desc">Average revenue generated over customer lifecycle months</span>
+              </div>
+              <div class="chart-body scrollable-x">
+                <table class="data-table" id="table-customer-ltv">
+                  <thead>
+                    <tr>
+                      <th>Cohort Month</th>
+                      <th>Cohort Size</th>
+                      <th>Month 0</th>
+                      <th>Months 1-3</th>
+                      <th>Months 4-6</th>
+                      <th>Months 7+</th>
+                      <th>Average LTV</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic cohort list -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top customers table -->
+          <div class="card margin-top-20">
+            <div class="chart-header">
+              <h3>Top 15 Most Valuable Customers</h3>
+              <span class="chart-desc">Ranked by total monetary spending</span>
+            </div>
+            <div class="chart-body scrollable-x">
+              <table class="data-table" id="table-top-customers">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>Total Orders</th>
+                    <th>Total Revenue</th>
+                    <th>Avg Order Value</th>
+                    <th>RFM Segment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab 3: Product Analytics -->
+        <div id="tab-products" class="tab-pane">
+          <div class="charts-grid-two">
+            <!-- Treemap -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Category & Subcategory Revenue Treemap</h3>
+                <span class="chart-desc">Hierarchical breakdown of company sales</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-category-treemap" class="apex-chart-container"></div>
+              </div>
+            </div>
+            <!-- Product Performance Scatter matrix -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Product Performance Matrix</h3>
+                <span class="chart-desc">X = Qty Sold, Y = Revenue, Bubble Size = Gross Profit</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-product-matrix" class="apex-chart-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="charts-grid-two margin-top-20">
+            <!-- Low Margin - High Revenue warnings -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Product Profitability Segmentations</h3>
+                <span class="chart-desc">Classification of high/low margin and volume products</span>
+              </div>
+              <div class="chart-body scrollable-y max-height-400">
+                <table class="data-table" id="table-product-profitability">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>Revenue</th>
+                      <th>Profit</th>
+                      <th>Margin</th>
+                      <th>Segment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Top / Bottom Selling lists -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Product Leaderboards</h3>
+                <span class="chart-desc">Compare top vs. bottom performing products</span>
+              </div>
+              <div class="chart-body flex-column gap-20">
+                <div>
+                  <h4 class="sub-title"><i class="fa-solid fa-crown text-success"></i> Top 5 Products (Sales Volume)</h4>
+                  <table class="data-table mini-table" id="table-top-selling-mini">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div>
+                  <h4 class="sub-title"><i class="fa-solid fa-arrow-trend-down text-danger"></i> Bottom 5 Products (Sales Volume)</h4>
+                  <table class="data-table mini-table" id="table-bottom-selling-mini">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab 4: Order Analytics -->
+        <div id="tab-orders" class="tab-pane">
+          <div class="charts-grid-two">
+            <!-- Orders by status pie -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Orders Distribution by Status</h3>
+                <span class="chart-desc">Total orders split by delivery outcomes</span>
+              </div>
+              <div class="chart-body flex-center">
+                <div id="chart-orders-status" class="apex-chart-container width-100"></div>
+              </div>
+            </div>
+            
+            <!-- Monthly returns timeline/breakdown -->
+            <div class="chart-card card">
+              <div class="chart-header">
+                <h3>Order Return Rate Analysis by Category</h3>
+                <span class="chart-desc">Ratio of Returned Orders to Total Orders</span>
+              </div>
+              <div class="chart-body">
+                <div id="chart-return-rate" class="apex-chart-container"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card margin-top-20">
+            <div class="chart-header">
+              <h3>Cancellation Rate Analysis</h3>
+              <span class="chart-desc">Product subcategories with the highest percentage of cancellations</span>
+            </div>
+            <div class="chart-body">
+              <div id="chart-cancellation-rate" class="apex-chart-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: SQL Query Console (Portfolio Feature) -->
+        <div id="tab-sql-console" class="tab-pane">
+          <div class="sql-console-grid">
+            <!-- Left Console Control panel -->
+            <div class="sql-query-sidebar card">
+              <div class="sidebar-title">
+                <i class="fa-solid fa-code"></i>
+                <h3>Showcase SQL Library</h3>
+              </div>
+              <p class="desc-text">Select a pre-compiled SQL query demonstrating expert analyst concepts (CTEs, Window functions, Joins, etc.) to review code and run it.</p>
+              
+              <div class="sql-dropdown-container">
+                <label for="sql-query-selector">Select SQL Concept:</label>
+                <select id="sql-query-selector">
+                  <!-- Load from SQL server index -->
+                </select>
+              </div>
+
+              <div id="selected-query-description" class="query-description-box">
+                <!-- Description load -->
+              </div>
+
+              <div class="console-actions">
+                <button id="btn-run-sql" class="btn btn-primary btn-block">
+                  <i class="fa-solid fa-play"></i> Execute Query
+                </button>
+                <button id="btn-copy-sql" class="btn btn-outline btn-block">
+                  <i class="fa-solid fa-copy"></i> Copy to Clipboard
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Console Terminal & Output -->
+            <div class="sql-editor-container card">
+              <div class="editor-header">
+                <span class="editor-title"><i class="fa-solid fa-terminal"></i> Interactive SQL Query Editor</span>
+                <span class="db-indicator active">Connected</span>
+              </div>
+              <!-- Text Area representing editor -->
+              <textarea id="sql-editor" class="code-editor" spellcheck="false"></textarea>
+              
+              <div class="results-container">
+                <div class="results-header">
+                  <span>Execution Output</span>
+                  <span id="results-count" class="badge">0 Rows</span>
+                </div>
+                <div class="results-body scrollable-xy" id="sql-results-table-container">
+                  <div class="empty-state">
+                    <i class="fa-solid fa-table"></i>
+                    <p>No query executed yet. Select a query from the library and click "Execute Query".</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Portfolio Developer Footer -->
+      <footer class="footer-credit card">
+        <p>© 2026 Designed & Developed by Jahanvi Singh | Retail Data Portfolio Project</p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+          <a href="#"><i class="fa-solid fa-briefcase"></i> Portfolio</a>
+        </div>
+      </footer>
+      
+    </main>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

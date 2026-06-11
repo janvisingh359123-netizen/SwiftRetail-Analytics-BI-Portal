@@ -1,0 +1,30 @@
+{
+  "name": "ecommerce-sales-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "An end-to-end e-commerce sales analytics dashboard featuring PostgreSQL, Express, and a custom interactive client dashboard.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node database.js --seed",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "keywords": [
+    "analytics",
+    "dashboard",
+    "postgresql",
+    "express",
+    "data-analyst",
+    "business-intelligence"
+  ],
+  "author": "",
+  "license": "ISC"
+}
